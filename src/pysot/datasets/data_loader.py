@@ -18,9 +18,9 @@ class data_set(Dataset):
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
-        length = {'bag' = 196, 'bear' = 26, 'book' = 51, 'camel' = 90, 'rhino' = 90, 'swan' = 50}
-        frames = [name+'-%0*d.bmp'%(3,im_begin) for i in range(1,length[name]+1)]
-        masks =  [name+'-%0*d.png'%(3,im_begin) for i in range(1,length[name]+1)]
+        length = {'bag': 196, 'bear': 26, 'book': 51, 'camel': 90, 'rhino': 90, 'swan': 50}
+        frames = [name+'-%0*d.bmp'%(3, im_begin) for i in range(1,length[name]+1)]
+        masks =  [name+'-%0*d.png'%(3, im_begin) for i in range(1,length[name]+1)]
 
         self.data  = pd.DataFrame(d={'frames' : frames, 'masks': masks})
 
