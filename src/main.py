@@ -1,10 +1,10 @@
-from src.test.test_sample_input import sample_input_array, sample_input_tensor
-from src.test.test_sample_train import build_opt_lr, sample_train
-from src.pysot.models.model_builder import ModelBuilder
-import src.pysot.core.config as cfg
-from src.pysot.datasets.data_loader import dataset_loader
+from test.test_sample_input import sample_input_array, sample_input_tensor
+from test.test_sample_train import build_opt_lr, sample_train
+from pysot.models.model_builder import ModelBuilder
+import pysot.core.config as cfg
+from pysot.datasets.data_loader import dataset_loader
 from skimage import io
-from src.tools.train import *
+from tools.train import *
 
 
 model = ModelBuilder().train().double()

@@ -37,3 +37,4 @@ lightning_logs/
 # Data not ready for deployment
 mini/
 requirements.txt
+/datasets

@@ -9,46 +9,6 @@ from torchvision import transforms, utils
 from src.pysot.datasets.anchor_target import *
 import random
 
-class data_set(Dataset):
-    """Face Landmarks dataset."""
-
-    def __init__(self, name, root_dir, transform=None):
-        """
-        Args:
-            csv_file (string): name of the sequence
-            root_dir (string): Directory with all the sequence.
-            transform (callable, optional): Optional transform to be applied
-                on a sample.
-        """
-        length = {'bag': 196, 'bear': 26, 'book': 51, 'camel': 90, 'rhino': 90, 'swan': 50}
-        frames = [name+'-%0*d.bmp'%(3, im_begin) for i in range(1,length[name]+1)]
-        masks =  [name+'-%0*d.png'%(3, im_begin) for i in range(1,length[name]+1)]
-
-        self.data  = pd.DataFrame(d={'frames' : frames, 'masks': masks})
-
-
-        self.path = root_dir
-
-    def __len__(self):
-        return len(self.frames)
-
-    def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
-        img_name = os.path.join(self.root_dir,self.data.iloc[idx, 0])
-        frame = io.imread(img_name)
-        mask_name = os.path.join(self.root_dir,self.data.iloc[idx, 1])
-        mask =  io.imread(mask_name)
-        bb = self.getBB(mask)
-        sample = {'frame': frame, 'mask': mask, 'boundbox': bb}
-
-        if self.transform:
-            sample = self.transform(sample)
-
-        return sample(idx)
-
-
 def getBB(mask):
     (m,n) = mask.shape
     print((m,n))
@@ -129,6 +89,7 @@ class dataset_loader(Dataset):
         bb = self.getBB(mask)
         sample = {'frame': frame, 'mask': mask, 'boundbox': bb}
         return sample
+        
     def getBB(self,mask):
         (m,n) = mask.shape
         print((m,n))
@@ -144,35 +105,6 @@ class dataset_loader(Dataset):
             x_max-=1
         return x_min, y_min, x_max ,y_max
 
-    def get_random_dict(self, max_id = 25):
-        id1 = np.random.random_integers(0, max_id)
-        id2 = np.random.random_integers(0, max_id)
-        spl1 = self.__getitem__(id1)
-        spl2 = self.__getitem__(id2)
-        image1 = spl1["frame"]
-        mask1 = spl1["mask"]
-        image2 = spl2["frame"]
-        mask2 = spl2["mask"]
-        return image_to_dict(image1, image2, mask1, mask2)
-
-    def get_random_dict_tensor(self, max_id = 25):
-        id1 = np.random.random_integers(0, max_id)
-        id2 = np.random.random_integers(0, max_id)
-        spl1 = self.__getitem__(id1)
-        spl2 = self.__getitem__(id2)
-        image1 = spl1["frame"]
-        mask1 = spl1["mask"]
-        image2 = spl2["frame"]
-        mask2 = spl2["mask"]
-        dict = image_to_dict(image1, image2, mask1, mask2)
-        return {
-            'template': torch.as_tensor(dict['template'], dtype=torch.double),
-            'search': torch.as_tensor(dict['search'], dtype=torch.double),
-            'label_cls': torch.from_numpy(dict['label_cls']),
-            'label_loc': torch.from_numpy(dict['label_loc']),
-            'label_loc_weight': torch.from_numpy(dict['label_loc_weight']),
-            'bbox': torch.from_numpy(np.array(dict['bbox']))
-        }
     def __getitem__(self):
         id1 = np.random.random_integers(0, self.max_id)
         id2 = np.random.random_integers(0, self.max_id)
