@@ -4,6 +4,8 @@ from src.pysot.models.model_builder import ModelBuilder
 import src.pysot.core.config as cfg
 from src.pysot.datasets.data_loader import dataset_loader
 from skimage import io
+from src.pysot.utils.distributed import dist_init, DistModule, reduce_gradients,\
+        average_reduce, get_rank, get_world_size
 from src.tools.train import *
 
 
@@ -37,7 +39,8 @@ def build_our_data_loader():
                               sampler=train_sampler)
     return train_loader
 
-
-
+rank, world_size = dist_init()
+train_loader = build_our_data_loader()
+dist_model = DistModule(model)
 
 train(train_loader, model, optimizer, scheduler, None)
