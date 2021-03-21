@@ -14,10 +14,11 @@ import cv2
 import numpy as np
 from torch.utils.data import Dataset
 
-from pysot.utils.bbox import center2corner, Center
-from pysot.datasets.anchor_target import AnchorTarget
-from pysot.datasets.augmentation import Augmentation
-from pysot.core.config import cfg
+from src.pysot.utils.bbox import center2corner, Center
+from src.pysot.datasets.anchor_target import AnchorTarget
+from src.pysot.datasets.augmentation import Augmentation
+#from src.pysot.core.config import cfg
+import src.pysot.core.config as cfg
 
 logger = logging.getLogger("global")
 
