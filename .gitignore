@@ -38,3 +38,6 @@ lightning_logs/
 mini/
 requirements.txt
 /datasets
+
+/logs/
+/snapshot/

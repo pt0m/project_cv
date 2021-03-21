@@ -93,15 +93,18 @@ def _get_local_ip():
 
 def dist_init():
     global rank, world_size, inited
+    rank, world_size = 0, 1
+    """
     try:
         rank, world_size = _dist_init()
     except RuntimeError as e:
         if 'public' in e.args[0]:
             logger.info(e)
             logger.info('Warning: use single process')
-            rank, world_size = 0, 1
+
         else:
             raise RuntimeError(*e.args)
+    """
     inited = True
     return rank, world_size
 

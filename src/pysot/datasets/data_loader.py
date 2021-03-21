@@ -39,6 +39,9 @@ def crop_data_around(template,x,y,size):
     if y_max > y_temp:
         y_max = y_temp
         y_min = y_temp - size
+    x_min, x_max, y_min, y_max = int(x_min), int(x_max), int(y_min), int(y_max)
+    print("dx = ", x_max-x_min)
+    print("dy = ", y_max-y_min)
     return template[x_min:x_max,y_min:y_max]
 
 anchor_target = AnchorTarget()
@@ -51,9 +54,9 @@ def image_to_dict(image1,image2, image1_mask, image2_mask):
     """
     bb1, bb2 = getBB(image1_mask), getBB(image2_mask)
     #template
-    template = image1[bb1[1]:bb1[3], bb1[0]:bb1[2]]
-    template = crop_data_around(template,(bb1[1]+bb1[3])/2, (bb1[0]+bb1[2])/2, cfg.TRAIN.EXEMPLAR_SIZE)
-    search = crop_data_around(image2,(bb1[1]+bb1[3])/2, (bb1[0]+bb1[2])/2, cfg.TRAIN.SEARCH_SIZE)
+    #template = image1[bb1[1]:bb1[3], bb1[0]:bb1[2]]
+    template = crop_data_around(image1,(bb1[1]+bb1[3])//2, (bb1[0]+bb1[2])//2, cfg.TRAIN.EXEMPLAR_SIZE)
+    search = crop_data_around(image2,(bb1[1]+bb1[3])//2, (bb1[0]+bb1[2])//2, cfg.TRAIN.SEARCH_SIZE)
     cls, delta, delta_weight, overlap = anchor_target(target = bb1, size = cfg.TRAIN.OUTPUT_SIZE)
     return {'template': template,
                 'search': search,
@@ -73,23 +76,23 @@ class dataset_loader(Dataset):
                 on a sample.
         """
         length = {'bag': 196, 'bear': 26, 'book': 51, 'camel': 90, 'rhino': 90, 'swan': 50}
-        frames = [name+'-%0*d.bmp'%(3, i) for i in range(1,length[name]+1)]
-        masks =  [name+'-%0*d.png'%(3, i) for i in range(1,length[name]+1)]
-        self.data  = pd.DataFrame({'frames' : frames, 'masks': masks})
+        self.frames = [name+'-%0*d.bmp'%(3, i) for i in range(1,length[name]+1)]
+        self.masks =  [name+'-%0*d.png'%(3, i) for i in range(1,length[name]+1)]
+        self.data  = pd.DataFrame({'frames' : self.frames, 'masks': self.masks})
         self.path = root_dir
         self.max_id =  length[name]
     def __getitem2__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        img_name = os.path.join(self.path,self.data.iloc[idx, 0])
+        img_name = self.path + self.frames[idx] # os.path.join(self.path,self.data.iloc[idx, 0])
         frame = io.imread(img_name)
-        mask_name = os.path.join(self.path,self.data.iloc[idx, 1])
+        mask_name =self.path + self.masks[idx]# os.path.join(self.path,self.data.iloc[idx, 1])
         mask =  io.imread(mask_name)
         bb = self.getBB(mask)
         sample = {'frame': frame, 'mask': mask, 'boundbox': bb}
         return sample
-        
+
     def getBB(self,mask):
         (m,n) = mask.shape
         print((m,n))
@@ -105,9 +108,15 @@ class dataset_loader(Dataset):
             x_max-=1
         return x_min, y_min, x_max ,y_max
 
-    def __getitem__(self):
-        id1 = np.random.random_integers(0, self.max_id)
-        id2 = np.random.random_integers(0, self.max_id)
+    def __len__(self):
+        return self.max_id
+    def __getitem__(self,index):
+        if(index > 0):
+            index_2 = 0
+        else:
+             index_2 = 1
+        id1 = np.random.random_integers(0, self.max_id-1)
+        id2 = np.random.random_integers(0, self.max_id-1)
         spl1 = self.__getitem2__(id1)
         spl2 = self.__getitem2__(id2)
         image1 = spl1["frame"]
@@ -117,6 +126,8 @@ class dataset_loader(Dataset):
         dict = image_to_dict(image1, image2, mask1, mask2)
         dict['template'] = dict['template'].transpose((2, 0, 1)).astype(np.float32)
         dict['search'] = dict['search'].transpose((2, 0, 1)).astype(np.float32)
+        print("template size=", dict['template'].shape)
+        print("seach size   =", dict['search'].shape)
         return {
             'template': torch.as_tensor(dict['template'], dtype=torch.double),
             'search': torch.as_tensor(dict['search'], dtype=torch.double),
