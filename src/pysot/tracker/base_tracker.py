@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import torch
 
-from src.pysot.core.config import cfg
+import src.pysot.core.config as cfg
 
 
 class BaseTracker(object):

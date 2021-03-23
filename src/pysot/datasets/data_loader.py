@@ -11,7 +11,7 @@ import random
 
 def getBB(mask):
     (m,n) = mask.shape
-    print((m,n))
+    #print((m,n))
     y_max, y_min = m-1,0
     x_max, x_min = n-1,0
     while 255 not in mask[y_min,:] and y_min < m:
@@ -40,8 +40,8 @@ def crop_data_around(template,x,y,size):
         y_max = y_temp
         y_min = y_temp - size
     x_min, x_max, y_min, y_max = int(x_min), int(x_max), int(y_min), int(y_max)
-    print("dx = ", x_max-x_min)
-    print("dy = ", y_max-y_min)
+    #print("dx = ", x_max-x_min)
+    #print("dy = ", y_max-y_min)
     return template[x_min:x_max,y_min:y_max]
 
 anchor_target = AnchorTarget()
@@ -95,7 +95,7 @@ class dataset_loader(Dataset):
 
     def getBB(self,mask):
         (m,n) = mask.shape
-        print((m,n))
+        #print((m,n))
         y_max, y_min = m-1,0
         x_max, x_min = n-1,0
         while 255 not in mask[y_min,:] and y_min < m:
@@ -126,8 +126,28 @@ class dataset_loader(Dataset):
         dict = image_to_dict(image1, image2, mask1, mask2)
         dict['template'] = dict['template'].transpose((2, 0, 1)).astype(np.float32)
         dict['search'] = dict['search'].transpose((2, 0, 1)).astype(np.float32)
-        print("template size=", dict['template'].shape)
-        print("seach size   =", dict['search'].shape)
+        print("template size =", dict['template'].shape)
+        print("seach size    =", dict['search'].shape)
+        return {
+            'template': torch.as_tensor(dict['template'], dtype=torch.double),
+            'search': torch.as_tensor(dict['search'], dtype=torch.double),
+            'label_cls': torch.from_numpy(dict['label_cls']),
+            'label_loc': torch.from_numpy(dict['label_loc']),
+            'label_loc_weight': torch.from_numpy(dict['label_loc_weight']),
+            'bbox': torch.from_numpy(np.array(dict['bbox']))
+        }
+    def getitem_test(self,index):
+        spl1 = self.__getitem2__(index)
+        spl2 = self.__getitem2__(index+1)
+        image1 = spl1["frame"]
+        mask1 = spl1["mask"]
+        image2 = spl2["frame"]
+        mask2 = spl2["mask"]
+        dict = image_to_dict(image1, image2, mask1, mask2)
+        dict['template'] = dict['template'].transpose((2, 0, 1)).astype(np.float32)
+        dict['search'] = dict['search'].transpose((2, 0, 1)).astype(np.float32)
+        #print("template size =", dict['template'].shape)
+        #print("seach size    =", dict['search'].shape)
         return {
             'template': torch.as_tensor(dict['template'], dtype=torch.double),
             'search': torch.as_tensor(dict['search'], dtype=torch.double),

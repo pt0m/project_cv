@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src.pysot.core.config import cfg
+import src.pysot.core.config as cfg
 from src.pysot.utils.bbox import cxy_wh_2_rect
 from src.pysot.tracker.siamrpn_tracker import SiamRPNTracker
 

@@ -1,7 +1,7 @@
 import numpy as np
 import torch.nn.functional as F
 
-from src.pysot.core.config import cfg
+import src.pysot.core.config as cfg
 from src.pysot.utils.anchor import Anchors
 from src.pysot.tracker.base_tracker import SiameseTracker
 

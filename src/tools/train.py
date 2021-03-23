@@ -178,12 +178,12 @@ def train(train_loader, model, optimizer, lr_scheduler, tb_writer):
             epoch = idx // num_per_epoch + start_epoch
 
             if get_rank() == 0:
-                torch.save(
-                        {'epoch': epoch,
-                         'state_dict': model.module.state_dict(),
-                         'optimizer': optimizer.state_dict()},
-                        cfg.TRAIN.SNAPSHOT_DIR+'/checkpoint_e%d.pth' % (epoch))
-
+                #torch.save(
+                #        {'epoch': epoch,
+                #         'state_dict': model.module.state_dict(),
+                #         'optimizer': optimizer.state_dict()},
+                #        cfg.TRAIN.SNAPSHOT_DIR+'/checkpoint_e%d.pth' % (epoch))
+                print("snapshot removed")
             if epoch == cfg.TRAIN.EPOCH:
                 return
 

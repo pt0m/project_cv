@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.pysot.core.config import cfg
+import src.pysot.core.config as cfg
 from src.pysot.tracker.siamrpn_tracker import SiamRPNTracker
 
 
