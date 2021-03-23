@@ -16,6 +16,7 @@ from src.pysot.utils.model_load import load_pretrain
 import cv2
 
 visualization = True
+fine_tuning = True
 
 def main():
     #iinstaciate model
@@ -28,7 +29,8 @@ def main():
 
 
     #load parameters from the training
-    model.load_state_dict(torch.load("model_save.pth"))
+    if(fine_tuning):
+        model.load_state_dict(torch.load("model_save.pth"))
     model = model.module
 
     model.eval()
