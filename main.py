@@ -12,12 +12,23 @@ from tensorboardX import SummaryWriter
 
 def main():
     model = ModelBuilder().train().double()
+
+    # load pretrained backbone weights
+    if cfg.BACKBONE.PRETRAINED:
+        print("Loading Backbone Weights")
+        load_pretrain(model.backbone, cfg.BACKBONE.PRETRAINED)
+
+    if cfg.TRAIN.PRETRAINED:
+        print("Loadind Full Model Weights")
+        load_pretrain(model, cfg.TRAIN.PRETRAINED)
+
+
     optimizer, scheduler = build_opt_lr(model, cfg.TRAIN.START_EPOCH)
 
     #sample_train(sample_input_tensor, model, optimizer, scheduler)
 
 
-    our_dataset = dataset_loader("bag", "./datasets/sequences-train/")
+    our_dataset = dataset_loader("bag", "../sequences-train/")
 
     #for i in range(10):
     #    print("train with sample n°", i )

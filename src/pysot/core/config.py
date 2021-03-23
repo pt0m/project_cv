@@ -97,7 +97,7 @@ TRAIN.OUTPUT_SIZE = 25
 
 TRAIN.RESUME = ''
 
-TRAIN.PRETRAINED = ''
+TRAIN.PRETRAINED = '../weights/model.pth'
 
 TRAIN.LOG_DIR = './logs'
 
@@ -185,7 +185,7 @@ DATASET.GRAY = 0.0
 BACKBONE.TYPE = 'resnet50'
 
 # Pretrained backbone weights
-BACKBONE.PRETRAINED = ''
+BACKBONE.PRETRAINED = '../weights/resnet50.model'
 
 # Train layers
 BACKBONE.TRAIN_LAYERS = ['layer2', 'layer3', 'layer4']
