@@ -22,7 +22,7 @@ def getBB(mask):
         y_max-=1
     while 255 not in mask[:,x_max] and x_max >= 0:
         x_max-=1
-    return x_min, y_min, x_max ,y_max
+    return x_min, y_min, x_max-x_min ,y_max-y_min
 
 
 
@@ -55,8 +55,8 @@ def image_to_dict(image1,image2, image1_mask, image2_mask):
     bb1, bb2 = getBB(image1_mask), getBB(image2_mask)
     #template
     #template = image1[bb1[1]:bb1[3], bb1[0]:bb1[2]]
-    template = crop_data_around(image1,(bb1[1]+bb1[3])//2, (bb1[0]+bb1[2])//2, cfg.TRAIN.EXEMPLAR_SIZE)
-    search = crop_data_around(image2,(bb1[1]+bb1[3])//2, (bb1[0]+bb1[2])//2, cfg.TRAIN.SEARCH_SIZE)
+    template = crop_data_around(image1,bb1[1]+(bb1[3])//2, bb1[0]+(bb1[2])//2, cfg.TRAIN.EXEMPLAR_SIZE)
+    search = crop_data_around(image2,bb1[1]+(bb1[3])//2, bb1[0]+(bb1[2])//2, cfg.TRAIN.SEARCH_SIZE)
     cls, delta, delta_weight, overlap = anchor_target(target = bb1, size = cfg.TRAIN.OUTPUT_SIZE)
     return {'template': template,
                 'search': search,
@@ -106,7 +106,7 @@ class dataset_loader(Dataset):
             y_max-=1
         while 255 not in mask[:,x_max] and x_max >= 0:
             x_max-=1
-        return x_min, y_min, x_max ,y_max
+        return x_min, y_min, x_max-x_min ,y_max-y_min
 
     def __len__(self):
         return self.max_id
@@ -144,6 +144,7 @@ class dataset_loader(Dataset):
         image2 = spl2["frame"]
         mask2 = spl2["mask"]
         dict = image_to_dict(image1, image2, mask1, mask2)
+
         dict['template'] = dict['template'].transpose((2, 0, 1)).astype(np.float32)
         dict['search'] = dict['search'].transpose((2, 0, 1)).astype(np.float32)
         #print("template size =", dict['template'].shape)
