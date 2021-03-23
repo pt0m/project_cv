@@ -9,6 +9,7 @@ from src.pysot.utils.distributed import dist_init, DistModule, reduce_gradients,
 from src.tools.train import *
 from tensorboardX import SummaryWriter
 
+device = torch.device('cpu')
 
 def main():
     model = ModelBuilder().train().double()
@@ -28,7 +29,7 @@ def main():
     #sample_train(sample_input_tensor, model, optimizer, scheduler)
 
 
-    our_dataset = dataset_loader("bag", "../sequences-train/")
+    our_dataset = dataset_loader("bag", "./datasets/sequences-train/")
 
     #for i in range(10):
     #    print("train with sample n°", i )
@@ -60,6 +61,8 @@ def main():
     print("training start")
     train(train_loader, model, optimizer, scheduler, tb_writer)
     print("training done")
+    torch.save(model.state_dict(), "./model_save.pth")
+
 
 if __name__ == '__main__':
     #freeze_support()

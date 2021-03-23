@@ -194,7 +194,7 @@ def train(train_loader, model, optimizer, lr_scheduler, tb_writer):
 
             #OLD CALL: BAD PLACE NOW SINCE SCHEDULER.STEP() SHOULD BE CALLED
             # AFTER OPTIMIZER.STEP() since pytorch 1.1
-            lr_scheduler.step()
+            lr_scheduler.step(epoch)
             cur_lr = lr_scheduler.get_cur_lr()
             logger.info('epoch: {}'.format(epoch+1))
 
@@ -212,6 +212,8 @@ def train(train_loader, model, optimizer, lr_scheduler, tb_writer):
 
         outputs = model(data)
         loss = outputs['total_loss']
+        if(epoch % 5 == 0):
+            torch.save(model.state_dict(), "./model_save.pth")
         print("[training] loss", loss)
         if is_valid_number(loss.data.item()):
             optimizer.zero_grad()

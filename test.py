@@ -22,23 +22,25 @@ def main():
     model = ModelBuilder().train().float()
     rank, world_size = dist_init()
     #train_loader = build_our_data_loader()
-    #dist_model   = DistModule(model)
+    dist_model   = DistModule(model)
     tb_writer    = SummaryWriter(cfg.TRAIN.LOG_DIR)
-    #model        = torch.nn.DataParallel(model)
+    model        = torch.nn.DataParallel(model)
 
 
     #load parameters from the training
-    #model.load_state_dict(torch.load("model_save.pth"))
+    model.load_state_dict(torch.load("model_save.pth"))
+    model = model.model
+    
     model.eval()
 
     #load de test dataset
-    test_dataset = load_test_dataset()
+    test_dataset = load_test_dataset(name = "bag",dir = "./datasets/sequences-train/",nb_images = 10)
 
     #run the test
     test(model,test_dataset)
 
 
-def load_test_dataset(name ="bag",dir = "./datasets/sequences-train/",nb_images = 25):
+def load_test_dataset(name ="bag",dir = "./datasets/sequences-train/",nb_images = 10):
     """
     format of the test dataset:
     """
