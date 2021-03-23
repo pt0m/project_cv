@@ -100,7 +100,7 @@ TRAIN.RESUME = ''
 
 TRAIN.PRETRAINED = '../weights/model.pth'
 if(mask_tracker == True):
-    TRAIN.PRETRAINED = './model.pth'
+    TRAIN.PRETRAINED = '../weights/model_mask.pth'
 
 TRAIN.LOG_DIR = './logs'
 
@@ -131,6 +131,8 @@ TRAIN.LOG_GRADS = False
 TRAIN.GRAD_CLIP = 10.0
 
 TRAIN.BASE_LR = 0.005
+
+TRAIN.LR.BASE_LR = 0.005
 
 TRAIN.LR.TYPE = 'log'
 
@@ -199,7 +201,7 @@ BACKBONE.LAYERS_LR = 0.1
 # Switch to train layer
 BACKBONE.TRAIN_EPOCH = 10
 
-BACKBONE.KWARGS = {'used_layers': [2, 3, 4]}
+BACKBONE.KWARGS = {'used_layers': [0, 1, 2, 3]}
 
 
 
@@ -213,7 +215,7 @@ ADJUST.ADJUST = True
 # Adjust layer type
 ADJUST.TYPE = "AdjustAllLayer"
 
-ADJUST.KWARGS = {'in_channels': [512, 1024, 2048], 'out_channels': [256, 256, 256]}
+ADJUST.KWARGS = {'in_channels': [1024], 'out_channels': [256]}
 
 
 # +------------------------------------------------------------------------+ #
@@ -221,9 +223,9 @@ ADJUST.KWARGS = {'in_channels': [512, 1024, 2048], 'out_channels': [256, 256, 25
 # +------------------------------------------------------------------------+ #
 
 # RPN type
-RPN.TYPE = 'MultiRPN'
+RPN.TYPE = 'DepthwiseRPN'
 
-RPN.KWARGS = {'anchor_num': 5, 'in_channels': [256, 256, 256], 'weighted': True}
+RPN.KWARGS = {'anchor_num': 5, 'in_channels': 256, 'out_channels': 256}
 
 
 
@@ -270,7 +272,7 @@ ANCHOR.RATIOS = [0.33, 0.5, 1, 2, 3]
 ANCHOR.SCALES = [8]
 
 # Anchor number
-ANCHOR.ANCHOR_NUM = len(ANCHOR.RATIOS) * len(ANCHOR.SCALES)
+ANCHOR.ANCHOR_NUM = 5
 
 
 
@@ -284,13 +286,13 @@ if(mask_tracker == True):
     TRACK.TYPE = 'SiamMaskTracker'
 
 # Scale penalty
-TRACK.PENALTY_K = 0.04
+TRACK.PENALTY_K = 0.10
 
 # Window influence
-TRACK.WINDOW_INFLUENCE = 0.44
+TRACK.WINDOW_INFLUENCE = 0.41
 
 # Interpolation learning rate
-TRACK.LR = 0.4
+TRACK.LR = 0.32
 
 # Exemplar size
 TRACK.EXEMPLAR_SIZE = 127
@@ -314,7 +316,7 @@ TRACK.CONFIDENCE_LOW = 0.85
 TRACK.CONFIDENCE_HIGH = 0.998
 
 # Mask threshold
-TRACK.MASK_THERSHOLD = 0.30
+TRACK.MASK_THERSHOLD = 0.15
 
 # Mask output size
 TRACK.MASK_OUTPUT_SIZE = 127
