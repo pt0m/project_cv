@@ -17,7 +17,7 @@ import cv2
 
 visualization = True
 pretrained = True
-fine_tuning = True #imply pretrained if fine tuned from pretraiend
+fine_tuning = False #imply pretrained if fine tuned from pretraiend
 
 def main():
     #iinstaciate model
@@ -119,6 +119,7 @@ def test(model, dataset):
 
         print('({:3d}) Video: {:12s} Time: {:5.1f}s Speed: {:3.1f}fps'.format(
             v_idx+1, "TEST", toc, idx / toc))
+
 
 
 if __name__ == '__main__':

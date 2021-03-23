@@ -42,3 +42,4 @@ requirements.txt
 /logs/
 /snapshot/
 model_save.pth
+model.pth
