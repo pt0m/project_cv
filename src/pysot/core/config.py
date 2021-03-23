@@ -200,6 +200,8 @@ BACKBONE.LAYERS_LR = 0.1
 BACKBONE.TRAIN_EPOCH = 10
 
 BACKBONE.KWARGS = {'used_layers': [2, 3, 4]}
+if(mask_tracker == True):
+    BACKBONE.KWARGS = {'used_layers': [3]}
 
 
 
