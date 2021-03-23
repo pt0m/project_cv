@@ -210,7 +210,7 @@ def train(train_loader, model, optimizer, lr_scheduler, tb_writer):
 
         outputs = model(data)
         loss = outputs['total_loss']
-
+        print("[training] loss", loss)
         if is_valid_number(loss.data.item()):
             optimizer.zero_grad()
             loss.backward()
