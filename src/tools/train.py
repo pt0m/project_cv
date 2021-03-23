@@ -192,7 +192,9 @@ def train(train_loader, model, optimizer, lr_scheduler, tb_writer):
                 optimizer, lr_scheduler = build_opt_lr(model.module, epoch)
                 logger.info("model\n{}".format(describe(model.module)))
 
-            lr_scheduler.step(epoch)
+            #OLD CALL: BAD PLACE NOW SINCE SCHEDULER.STEP() SHOULD BE CALLED
+            # AFTER OPTIMIZER.STEP() since pytorch 1.1
+            lr_scheduler.step()
             cur_lr = lr_scheduler.get_cur_lr()
             logger.info('epoch: {}'.format(epoch+1))
 
@@ -222,6 +224,7 @@ def train(train_loader, model, optimizer, lr_scheduler, tb_writer):
             # clip gradient
             clip_grad_norm_(model.parameters(), cfg.TRAIN.GRAD_CLIP)
             optimizer.step()
+            #lr_scheduler.step()
 
         batch_time = time.time() - end
         batch_info = {}
