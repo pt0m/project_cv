@@ -29,8 +29,8 @@ def main():
 
     #load parameters from the training
     model.load_state_dict(torch.load("model_save.pth"))
-    model = model.model
-    
+    model = model.module
+
     model.eval()
 
     #load de test dataset
