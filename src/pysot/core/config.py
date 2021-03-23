@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 mask_tracker = False
 
-META_ARC = "siamrpn_r50_l234_dwxcorr"
+#META_ARC = "siamrpn_r50_l234_dwxcorr"
 CUDA     = False
 
 # +------------------------------------------------------------------------+ #
@@ -270,7 +270,7 @@ ANCHOR.ANCHOR_NUM = len(ANCHOR.RATIOS) * len(ANCHOR.SCALES)
 # +------------------------------------------------------------------------+ #
 
 TRACK.TYPE = 'SiamRPNTracker'
-if(mask_tracker = True):
+if(mask_tracker == True):
     TRACK.TYPE = 'SiamMaskTracker'
 
 # Scale penalty
