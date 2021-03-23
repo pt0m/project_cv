@@ -16,16 +16,32 @@ from src.pysot.utils.model_load import load_pretrain
 import cv2
 
 visualization = True
-fine_tuning = True
+pretrained = True
+fine_tuning = True #imply pretrained if fine tuned from pretraiend
 
 def main():
     #iinstaciate model
     model = ModelBuilder().train().float()
+
+    #pretrained
+    if(pretrained):
+        # load pretrained backbone weights
+        if cfg.BACKBONE.PRETRAINED:
+            print("Loading Backbone Weights")
+            load_pretrain(model.backbone, cfg.BACKBONE.PRETRAINED)
+
+        if cfg.TRAIN.PRETRAINED:
+            print("Loadind Full Model Weights")
+            load_pretrain(model, cfg.TRAIN.PRETRAINED)
+
+
+
     rank, world_size = dist_init()
     #train_loader = build_our_data_loader()
     dist_model   = DistModule(model)
     tb_writer    = SummaryWriter(cfg.TRAIN.LOG_DIR)
     model        = torch.nn.DataParallel(model)
+
 
 
     #load parameters from the training
@@ -89,9 +105,9 @@ def test(model, dataset):
             if visualization and idx > 0:
                 gt_bbox = list(map(int, gt_bbox))
                 pred_bbox = list(map(int, pred_bbox))
-                cv2.rectangle(img, (gt_bbox[0], gt_bbox[1]),
+                #cv2.rectangle(img, (gt_bbox[0], gt_bbox[1]),
                             #(gt_bbox[2], gt_bbox[3]), (0, 255, 0), 3)
-                             (gt_bbox[0]+gt_bbox[2], gt_bbox[1]+gt_bbox[3]), (0, 255, 0), 3)
+                #             (gt_bbox[0]+gt_bbox[2], gt_bbox[1]+gt_bbox[3]), (0, 255, 0), 3)
                 cv2.rectangle(img, (pred_bbox[0], pred_bbox[1]),
                               (pred_bbox[0]+pred_bbox[2], pred_bbox[1]+pred_bbox[3]), (0, 255, 255), 3)
                 cv2.putText(img, str(idx), (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
