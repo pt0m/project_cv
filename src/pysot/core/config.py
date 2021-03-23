@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-mask_tracker = False
+mask_tracker = True
 
 #META_ARC = "siamrpn_r50_l234_dwxcorr"
 CUDA     = False
@@ -99,6 +99,8 @@ TRAIN.OUTPUT_SIZE = 25
 TRAIN.RESUME = ''
 
 TRAIN.PRETRAINED = '../weights/model.pth'
+if(mask_tracker == True):
+    TRAIN.PRETRAINED = './model.pth'
 
 TRAIN.LOG_DIR = './logs'
 
@@ -231,14 +233,22 @@ RPN.KWARGS = {'anchor_num': 5, 'in_channels': [256, 256, 256], 'weighted': True}
 
 # Whether to use mask generate segmentation
 MASK.MASK = False
+if(mask_tracker == True):
+    MASK.MASK = True
 
 # Mask type
 MASK.TYPE = "MaskCorr"
+if(mask_tracker == True):
+    MASK.TYPE = "MaskCorr"
 
 MASK.KWARGS = {}
+if(mask_tracker == True):
+    MASK.KWARGS = {'in_channels': 256, 'hidden': 256, 'out_channels': 3969}
 
 # Mask refine
 REFINE.REFINE = False
+if(mask_tracker == True):
+    REFINE.REFINE = True
 
 # Refine type
 REFINE.TYPE = "Refine"
