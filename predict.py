@@ -10,13 +10,14 @@ from src.pysot.utils.bbox import IoU
 from test import load_test_dataset
 
 
+
 PRETRAINED = True
-ROOTDIR    = "../sequences-train/"
-NAME       = 'bag'
+ROOTDIR    = "./datasets/sequences-train/"
+NAME       = 'fish'
 
 
 def load_dataset(rootdir, name):
-    lengths = {'bag': 196, 'bear': 26, 'book': 51, 'camel': 90, 'rhino': 90, 'swan': 50}
+    lengths = {'bag': 196, 'bear': 26, 'book': 51, 'camel': 90, 'rhino': 90, 'swan': 50, 'octopus': 26, 'fish': 26}
     return load_test_dataset(name=name, dir=rootdir, nb_images=lengths[name])
 
 
@@ -37,7 +38,7 @@ def dice_score(outputs, targets, ratio=0.5):
     outputs = outputs.flatten()
     targets = targets.flatten()
     outputs[outputs > ratio] = np.float32(1)
-    outputs[outputs < ratio] = np.float32(0)    
+    outputs[outputs < ratio] = np.float32(0)
     return float(2 * (targets * outputs).sum())/float(targets.sum() + outputs.sum())
 
 
@@ -50,7 +51,7 @@ def predict(model, dataset):
     gt_bboxes = []
     ious = []
     scores = []
-    track_times = []  
+    track_times = []
     for idx, (img, gt_bbox) in tqdm(enumerate(video), total=len(video)):
         tic = cv2.getTickCount()
         if idx == 0:
@@ -80,7 +81,7 @@ def predict(model, dataset):
 def main():
     model, dataset = load_model(PRETRAINED), load_dataset(ROOTDIR, NAME)
     imgs, gt_bboxes, pred_bboxes, scores, ious, speed = predict(model, dataset)
-    np.savez("predictions", 
+    np.savez("predictions",
              imgs=imgs, gt_bboxes=gt_bboxes, pred_bboxes=pred_bboxes,
              scores=scores, ious=ious, speed=speed)
 
@@ -88,6 +89,3 @@ def main():
 
 
 if __name__=='__main__': main()
-
-
-

@@ -57,13 +57,19 @@ def image_to_dict(image1,image2, image1_mask, image2_mask):
     #template = image1[bb1[1]:bb1[3], bb1[0]:bb1[2]]
     template = crop_data_around(image1,bb1[1]+(bb1[3])//2, bb1[0]+(bb1[2])//2, cfg.TRAIN.EXEMPLAR_SIZE)
     search = crop_data_around(image2,bb1[1]+(bb1[3])//2, bb1[0]+(bb1[2])//2, cfg.TRAIN.SEARCH_SIZE)
+    #template = crop_data_around(image1,bb1[1]+(bb1[3])//2, bb1[0]+(bb1[2])//2, cfg.TRAIN.EXEMPLAR_SIZE)
+    label_mask = crop_data_around(image2,bb1[1]+(bb1[3])//2, bb1[0]+(bb1[2])//2, cfg.TRAIN.SEARCH_SIZE)
+    label_mask[label_mask < 50] = 0
+    label_mask[label_mask > 50] = 1
     cls, delta, delta_weight, overlap = anchor_target(target = bb1, size = cfg.TRAIN.OUTPUT_SIZE)
     return {'template': template,
                 'search': search,
                 'label_cls': cls,
                 'label_loc': delta,
                 'label_loc_weight': delta_weight,
-                'bbox': np.array(bb1)}
+                'bbox': np.array(bb1),
+                'label_mask': label_mask
+                }
 
 
 class dataset_loader(Dataset):
@@ -75,7 +81,7 @@ class dataset_loader(Dataset):
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
-        length = {'bag': 196, 'bear': 26, 'book': 51, 'camel': 90, 'rhino': 90, 'swan': 50}
+        length = {'bag': 196, 'bear': 26, 'book': 51, 'camel': 90, 'rhino': 90, 'swan': 50, 'octopus': 26, 'fish': 26}
         self.frames = [name+'-%0*d.bmp'%(3, i) for i in range(1,length[name]+1)]
         self.masks =  [name+'-%0*d.png'%(3, i) for i in range(1,length[name]+1)]
         self.data  = pd.DataFrame({'frames' : self.frames, 'masks': self.masks})
@@ -134,7 +140,8 @@ class dataset_loader(Dataset):
             'label_cls': torch.from_numpy(dict['label_cls']),
             'label_loc': torch.from_numpy(dict['label_loc']),
             'label_loc_weight': torch.from_numpy(dict['label_loc_weight']),
-            'bbox': torch.from_numpy(np.array(dict['bbox']))
+            'bbox': torch.from_numpy(np.array(dict['bbox'])),
+            'label_mask': torch.from_numpy(dict['label_mask'])
         }
     def getitem_test(self,index):
         spl1 = self.__getitem2__(index)

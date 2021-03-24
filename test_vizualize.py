@@ -66,7 +66,7 @@ def load_test_dataset(name ="bag",dir = "./datasets/sequences-train/",nb_images 
     #test_dataset = dataset_loader()
     video = []
 
-    nb_images = test_dataset.__len__()
+    nb_images = test_dataset.__len__()-1
     for i in range(nb_images):
         image = test_dataset.__getitem2__(i)
         video.append((image["frame"], image["boundbox"]))
