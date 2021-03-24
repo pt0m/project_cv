@@ -111,12 +111,14 @@ class dataset_loader(Dataset):
     def __len__(self):
         return self.max_id
     def __getitem__(self,index):
-        if(index > 0):
-            index_2 = 0
+        if(index == 0):
+            index_2 = 1
         else:
-             index_2 = 1
-        id1 = np.random.random_integers(0, self.max_id-1)
-        id2 = np.random.random_integers(0, self.max_id-1)
+             index_2 = index-1
+        #id1 = np.random.random_integers(0, self.max_id-1)
+        #id2 = np.random.random_integers(0, self.max_id-1)
+        id1 = index_2
+        id2 = index
         spl1 = self.__getitem2__(id1)
         spl2 = self.__getitem2__(id2)
         image1 = spl1["frame"]
