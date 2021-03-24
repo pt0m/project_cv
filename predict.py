@@ -46,6 +46,7 @@ def predict(model, dataset):
     video = dataset[0]
     toc = 0
     pred_bboxes = []
+    gt_bboxes = []
     ious = []
     scores = []
     track_times = []  
@@ -57,10 +58,12 @@ def predict(model, dataset):
             tracker.init(img, gt_bbox_)
             pred_bbox = gt_bbox_
             scores.append(0)
+            gt_bboxes.append(gt_bbox_)
             pred_bboxes.append(pred_bbox)
         else:
             outputs = tracker.track(img)
             pred_bbox = outputs['bbox']
+            gt_bboxes.append(gt_bbox)
             pred_bboxes.append(pred_bbox)
             scores.append(outputs['best_score'])
             ious.append(IoU(pred_bbox, gt_bbox))
@@ -68,12 +71,15 @@ def predict(model, dataset):
         track_times.append((cv2.getTickCount() - tic)/cv2.getTickFrequency())
     toc /= cv2.getTickFrequency()
     speed = idx / toc
-    return pred_bboxes, scores, ious, speed
+    return gt_bboxes, pred_bboxes, scores, ious, speed
 
 
 def main():
     model, dataset = load_model(PRETRAINED), load_dataset(ROOTDIR, NAME)
-    pred_bboxes, scores, ious, speed = predict(model, dataset)
+    gt_bboxes, pred_bboxes, scores, ious, speed = predict(model, dataset)
+    np.savez("predictions", 
+             gt_bboxes=gt_bboxes, pred_bboxes=pred_bboxes,
+             scores=scores, ious=ious, speed=speed)
 
 
 
