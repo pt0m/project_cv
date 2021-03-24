@@ -29,7 +29,7 @@ def main():
     #sample_train(sample_input_tensor, model, optimizer, scheduler)
 
 
-    our_dataset = dataset_loader("bag", "./datasets/sequences-train/")
+    our_dataset = dataset_loader("bag", "../sequences-train/")
 
     #for i in range(10):
     #    print("train with sample n°", i )
